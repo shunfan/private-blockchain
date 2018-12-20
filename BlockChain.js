@@ -19,7 +19,7 @@ class Blockchain {
     // will not create the genesis block
     async generateGenesisBlock() {
         const blockHeight = await this.getBlockHeight();
-        if (blockHeight === 0) {
+        if (blockHeight === -1) {
             const genesisBlock = new Block.Block();
             this.addBlock(genesisBlock);
         }
@@ -28,7 +28,7 @@ class Blockchain {
     // Get block height, it is auxiliar method that return the height of the blockchain
     async getBlockHeight() {
         const blocksCount = await this.bd.getBlocksCount();
-        return blocksCount;
+        return blocksCount - 1;
     }
 
     // Add new block
@@ -36,15 +36,15 @@ class Blockchain {
         const blockHeight = await this.getBlockHeight();
         // Additionally, when adding a new block to the chain, code checks if a Genesis block already
         // exists. If not, one is created before adding the a block.
-        if (blockHeight === 0) {
+        if (blockHeight === -1) {
             console.log('Generating genesis block...');
             const genesisBlock = new Block.Block('Genesis Block');
             genesisBlock.time = new Date().getTime();
             genesisBlock.hash = SHA256(JSON.stringify(genesisBlock)).toString();
             return await this.bd.addLevelDBData(genesisBlock.height, JSON.stringify(genesisBlock));
         }
-        block.height = blockHeight;
-        const previousBlock = await this.getBlock(blockHeight - 1);
+        block.height = blockHeight + 1;
+        const previousBlock = await this.getBlock(blockHeight);
         block.previousBlockHash = previousBlock.hash;
         block.time = new Date().getTime();
         block.hash = SHA256(JSON.stringify(block)).toString();
@@ -70,7 +70,7 @@ class Blockchain {
         let errorLog = [];
         let blockHeight = await this.getBlockHeight();
         let previousBlockHash = '';
-        while (i < blockHeight) {
+        while (i <= blockHeight) {
             const isBlockValid = await this.validateBlock(i);
             if (!isBlockValid) {
                 errorLog.push(`Block ${i}'s hash is not valid.`);
