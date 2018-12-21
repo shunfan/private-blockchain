@@ -6,6 +6,15 @@ In this project I created the classes to manage my private blockchain, to be abl
 
 The web API uses Express.js framework.
 
+## Start the server
+
+The command used to start the server:
+
+```bash
+npm install
+node server.js
+```
+
 ## Endpoints
 
 ### GET /block/:blockHeight
