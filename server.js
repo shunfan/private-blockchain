@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 const blockChain = new BlockChain.Blockchain();
 
 app.get('/block/:blockHeight', (req, res) => {
-    return blockChain.getBlock(req.params.blockHeight).then(
+    blockChain.getBlock(req.params.blockHeight).then(
         block => {
             // The response for the endpoint provides a block object in JSON format.
             res.status(200).json(block);
@@ -25,7 +25,7 @@ app.get('/block/:blockHeight', (req, res) => {
 app.post('/block', (req, res) => {
     const blockData = req.body.body;
     if (blockData) {
-        return blockChain.addBlock(new Block.Block(blockData)).then(
+        blockChain.addBlock(new Block.Block(blockData)).then(
             block => {
                 // The response for the endpoint is a block object in JSON format.
                 res.status(201).json(JSON.parse(block));
